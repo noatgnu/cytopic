@@ -1,0 +1,71 @@
+<h1 mat-dialog-title>Create Edge</h1>
+<mat-dialog-content>
+  <mat-card style="margin-top: 10px">
+    <mat-form-field>
+      <mat-label>Source Node</mat-label>
+      <mat-select [(ngModel)]="source">
+        <mat-option *ngFor="let n of data.nodes" [value]="n.id">
+          {{n.name}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field style="margin-left: 10px">
+      <mat-label>Target Node</mat-label>
+      <mat-select [(ngModel)]="target" multiple>
+        <mat-option *ngFor="let n of data.nodes" [value]="n.id">
+          {{n.name}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Edge color</mat-label>
+      <input matInput [ngxMatColorPicker]="picker" [(ngModel)]="colorCtr" [disabled]="false">
+      <ngx-mat-color-toggle matSuffix [for]="picker"></ngx-mat-color-toggle>
+      <ngx-mat-color-picker #picker [touchUi]="false" color="primary"></ngx-mat-color-picker>
+    </mat-form-field>
+    <button mat-icon-button (click)="addEdge()"><mat-icon>add</mat-icon></button>
+  </mat-card>
+  <mat-card>
+    <table #table
+           mat-table
+           [dataSource]="edges"
+           class="mat-elevation-z8"
+           style="margin: 10px"
+    >
+      <ng-container matColumnDef="source">
+        <th mat-header-cell *matHeaderCellDef>Edge Source</th>
+        <td mat-cell *matCellDef="let r">{{r.source}}</td>
+      </ng-container>
+      <ng-container matColumnDef="target">
+        <th mat-header-cell *matHeaderCellDef>
+          Edge
+        </th>
+        <td mat-cell *matCellDef="let r">
+          {{r.target}}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="color">
+        <th mat-header-cell *matHeaderCellDef>
+          Color
+        </th>
+        <td mat-cell *matCellDef="let r" [style]="{color: r.color}">
+          {{r.color}}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>
+          Actions
+        </th>
+        <td mat-cell *matCellDef="let r">
+          <button mat-icon-button color="warn" (click)="deleteEdge(r.id)"><mat-icon>delete</mat-icon></button>
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="['source', 'target', 'color', 'actions']"></tr>
+      <tr mat-row *matRowDef="let row; columns: ['source', 'target', 'color', 'actions'];"></tr>
+    </table>
+  </mat-card>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-raised-button color="accent" [mat-dialog-close]="{accept: true, edges: edges}">Create</button>
+  <button mat-raised-button color="accent" [mat-dialog-close]="{accept: false}">Close</button>
+</mat-dialog-actions>

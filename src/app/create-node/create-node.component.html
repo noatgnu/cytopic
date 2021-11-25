@@ -1,0 +1,107 @@
+<h1 mat-dialog-title>Create Node</h1>
+<mat-dialog-content>
+  <mat-card style="margin-top: 10px">
+    <mat-card-title>
+      Node name
+    </mat-card-title>
+    <mat-card-content>
+      <div>
+        <mat-form-field>
+          <mat-label>Node name</mat-label>
+          <input matInput [(ngModel)]="nodeName">
+        </mat-form-field>
+      </div>
+    </mat-card-content>
+  </mat-card>
+  <mat-card style="margin-top: 10px">
+    <mat-card-title>
+      Basic Parameters
+    </mat-card-title>
+    <mat-card-content>
+      <div>
+        <mat-form-field>
+          <mat-label>Copy parameters from created nodes</mat-label>
+          <mat-select [(ngModel)]="cloneNodeParameters">
+            <mat-option *ngFor="let c of data.nodes; let i = index" [value]="i">
+              {{c.name}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <button mat-flat-button color="primary" style="margin-left: 10px" (click)="cloneParameters()">Copy</button>
+      </div>
+      <div>
+        <mat-form-field>
+          <mat-label>Node color</mat-label>
+          <input matInput [ngxMatColorPicker]="picker" [(ngModel)]="colorCtr" [disabled]="false" (focusout)="printColor()">
+          <ngx-mat-color-toggle matSuffix [for]="picker"></ngx-mat-color-toggle>
+          <ngx-mat-color-picker #picker [touchUi]="false" color="primary"></ngx-mat-color-picker>
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-form-field>
+          <mat-label>Select Data Source</mat-label>
+          <mat-select [(ngModel)]="dataSource">
+            <mat-option *ngFor="let c of dfList" [value]="c">
+              <p *ngIf="c!=='root'">{{c}}.  {{data.nodes[convertToNumber(c)].name}}</p>
+              <p *ngIf="c==='root'">{{c}}</p>
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-slide-toggle [(ngModel)]="extant">Is extant node</mat-slide-toggle>
+      </div>
+    </mat-card-content>
+  </mat-card>
+  <mat-card style="margin-top: 10px">
+    <mat-card-title>
+      Data Filtering Parameters
+    </mat-card-title>
+    <mat-card-content>
+      <div>
+        <mat-form-field>
+          <mat-label>Select Columns</mat-label>
+          <mat-select [(ngModel)]="columnNames" multiple>
+            <mat-option *ngFor="let c of data.dataMap[dataSource].getColumnNames()" [value]="c">
+              {{c}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div *ngIf="filterList.length >0">
+        <div *ngFor="let i of filterList; let ind = index">
+          <mat-form-field>
+            <mat-label>Select Column</mat-label>
+            <mat-select [(ngModel)]="i.columnNames" multiple>
+              <mat-option *ngFor="let o of columnNames" [value]="o">
+                {{o}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Select Filter Operator</mat-label>
+            <mat-select [(ngModel)]="i.operator">
+              <mat-option *ngFor="let o of operator" [value]="o">
+                {{o}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field style="margin-left: 10px">
+            <mat-label>Filter Value</mat-label>
+            <input matInput type="text" [(ngModel)]="i.value">
+          </mat-form-field>
+          <mat-slide-toggle [(ngModel)]="i.exact" style="margin-left: 10px">Condition applies to All Columns</mat-slide-toggle>
+          <mat-slide-toggle [(ngModel)]="i.keep" style="margin-left: 10px">Keep rows with value</mat-slide-toggle>
+          <button mat-icon-button color="warn" (click)="deleteFilter(ind)" style="margin-left: 10px"><mat-icon>delete</mat-icon></button>
+        </div>
+      </div>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-raised-button (click)="createFilterForm()" style="margin-left: 10px">Add Filter</button>
+    </mat-card-actions>
+  </mat-card>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-raised-button color="accent" [mat-dialog-close]="{accept: true, columnNames: columnNames, data: data.dataMap[dataSource], filterList: filterList, color: colorCtr, nodeName: nodeName, extant: extant, parent: dataSource}">Create</button>
+  <button mat-raised-button color="accent" [mat-dialog-close]="{accept: false}">Close</button>
+</mat-dialog-actions>
