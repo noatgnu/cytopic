@@ -41,9 +41,8 @@
         <mat-form-field>
           <mat-label>Select Data Source</mat-label>
           <mat-select [(ngModel)]="dataSource">
-            <mat-option *ngFor="let c of dfList" [value]="c">
-              <p *ngIf="c!=='root'">{{c}}.  {{data.nodes[convertToNumber(c)].name}}</p>
-              <p *ngIf="c==='root'">{{c}}</p>
+            <mat-option *ngFor="let c of dfList" [value]="c.id">
+              {{c.name}}
             </mat-option>
           </mat-select>
         </mat-form-field>

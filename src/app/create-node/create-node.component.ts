@@ -14,7 +14,7 @@ export class CreateNodeComponent implements OnInit {
   colorCtr: any = null
   nodeName: string = ""
   extant: boolean = false
-  dfList: string[] = []
+  dfList: any[] = []
   cloneNodeParameters: number = 0
   printColor() {
 
@@ -26,9 +26,7 @@ export class CreateNodeComponent implements OnInit {
   }
 
   constructor(public data: DataService) {
-    for (const m in data.dataMap) {
-      this.dfList.push(m)
-    }
+    this.dfList = this.getKeys()
   }
 
   ngOnInit(): void {
@@ -50,5 +48,21 @@ export class CreateNodeComponent implements OnInit {
 
   convertToNumber(data: string) {
     return parseInt(data)
+  }
+
+  getKeys() {
+    const result: any = []
+    for (const s of Object.keys(this.data.dataMap)) {
+      if (s !== "root") {
+        const n = this.convertToNumber(s)
+        if (this.data.nodes[n]) {
+          result.push({id: s, name: s + ". " + this.data.nodes[n].name})
+        }
+      } else {
+        result.push({id: "root", name: "root"})
+      }
+
+    }
+    return result
   }
 }

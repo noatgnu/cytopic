@@ -100,6 +100,7 @@ export class AppComponent implements OnInit, AfterViewInit{
   createNode() {
     const dialogRef = this.dialog.open(CreateNodeComponent)
     dialogRef.afterClosed().subscribe(result => {
+      console.log(result)
       if (result.accept) {
         const nodeData: any[] = []
         for (const r of result.data.toArray()) {
@@ -122,58 +123,53 @@ export class AppComponent implements OnInit, AfterViewInit{
               switch (fi.operator) {
                 case ">=":
                   if (source >= target) {
-                    if (fi.keep) {
-                      filterPass ++
-                    }
+                    filterPass ++
                   }
                   break
                 case ">":
                   if (source > target) {
-                    if (fi.keep) {
-                      filterPass ++
-                    }
+                    filterPass ++
                   }
                   break
                 case "=":
                   if (source === target) {
-                    if (fi.keep) {
-                      filterPass ++
-                    }
+                    filterPass ++
                   }
                   break
                 case "<":
                   if (source < target) {
-                    if (fi.keep) {
-                      filterPass ++
-                    }
+                    filterPass ++
                   }
                   break
                 case "=<":
                   if (source <= target) {
-                    if (fi.keep) {
-                      filterPass ++
-                    }
+                    filterPass ++
                   }
                   break
               }
             }
-            if (fi.exact) {
-              if (filterPass === fi.columnNames.length) {
-                pass.push(true)
+            if (fi.keep) {
+              if (fi.exact) {
+                if (filterPass === fi.columnNames.length) {
+                  pass.push(true)
+                }
               } else {
-                if (!fi.keep) {
+                if (filterPass > 0) {
                   pass.push(true)
                 }
               }
             } else {
-              if (filterPass > 0) {
-                pass.push(true)
+              if (fi.exact) {
+                if (filterPass !== fi.columnNames.length) {
+                  pass.push(true)
+                }
               } else {
-                if (!fi.keep) {
+                if (filterPass === 0) {
                   pass.push(true)
                 }
               }
             }
+
           }
           if (pass.length === result.filterList.length) {
             nodeData.push(r)
