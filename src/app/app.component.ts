@@ -207,12 +207,11 @@ export class AppComponent implements OnInit, AfterViewInit{
     const data: any = []
     const style: any = []
     for (const n of this._data.nodes) {
-      data.push({data: {id: n.id, label: n.name, size: this._nodeScalingFactor * n.count}, classes: n.id+n.name})
+      data.push({data: {id: n.id, label: n.name, size: this._nodeScalingFactor * n.count, count: n.count}, classes: n.id+n.name})
       style.push({selector: "." + n.id+n.name, style: {label: "data(label)", "background-color": "#" +n.color.hex, height: "data(size)", width: "data(size)"}})
       if (n.extant) {
         const first = this._data.dataMap[n.id].first()
         let m: number
-        console.log(this._data.dataMap[n.id].getSeries(this.fcColumn).bake())
         if (!(typeof first[this.fcColumn] === "number")) {
           const fc = this._data.dataMap[n.id].getSeries(this.fcColumn).bake().parseFloats()
           m = fc.max()

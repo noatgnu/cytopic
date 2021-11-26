@@ -3,6 +3,8 @@ import {AfterViewInit, Component, Input, OnInit} from '@angular/core';
 import * as cytoscape from "cytoscape";
 import * as svg from "cytoscape-svg";
 import * as cola from "cytoscape-cola";
+import * as popper from "cytoscape-popper";
+import tippy from "tippy.js";
 import {FileSaverService} from "ngx-filesaver";
 import {DrawData} from "../classes/draw-data";
 import {conditionallyCreateMapObjectLiteral} from "@angular/compiler/src/render3/view/util";
@@ -36,6 +38,7 @@ export class PlotComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     cytoscape.use(cola)
     cytoscape.use(svg)
+    cytoscape.use(popper)
     this.draw();
   }
 
@@ -47,7 +50,40 @@ export class PlotComponent implements OnInit, AfterViewInit {
         elements: this.drawData.data,
         style: this.drawData.stylesheet
       })
+
     this.cy.layout({name: "cola", maxSimulationTime: 20000}).run()
+    for (const n of this.cy.nodes()) {
+      let ref = n.popperRef()
+      let de = document.createElement('div');
+
+      n.tippy = tippy(de, {
+        getReferenceClientRect: ref.getBoundingClientRect,
+        trigger: 'manual',
+        theme: 'light',
+        arrow: true,
+        allowHTML: true,
+        animation: 'fade',
+        content: () => {
+          let div = document.createElement('div');
+          let content = ""
+          if (n.data().count) {
+            content = "Count:" + n.data().count
+          } else {
+            content = "Label:" + n.data().label
+          }
+          div.innerHTML = `<div>${content}</div>`
+          document.body.append(div)
+          return div
+        }
+      })
+      n.unbind("mouseover");
+      n.bind("mouseover", function (event) {
+        console.log(event.target)
+        event.target.tippy.show()
+      })
+      n.unbind("mouseout");
+      n.bind("mouseout", event => event.target.tippy.hide())
+    }
   }
 
   download() {
