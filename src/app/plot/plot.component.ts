@@ -78,7 +78,7 @@ export class PlotComponent implements OnInit, AfterViewInit {
       })
       n.unbind("mouseover");
       n.bind("mouseover", function (event) {
-        console.log(event.target)
+        console.log(event.cyTarget.id())
         event.target.tippy.show()
       })
       n.unbind("mouseout");
